@@ -4,20 +4,21 @@ from tkinter import filedialog
 from collections import defaultdict
 
 def main():
-    print("Hello World!")
     root = tk.Tk()
-    w = tk.Label(text="Hello, Tkinter")
+    w = tk.Label(text="Format CSV with SKU column A, locations column B and quantity in stock column C")
     w.pack()
+    w2 = tk.Label(text="output file")
     btn = tk.Button(
             text="Select CSV",
             width=25,
             height=5,
-            command=getCSVPress,
+            command=lambda: getCSVPress(w2),
             )
     btn.pack()
+    w2.pack()
     root.mainloop()
 
-def getCSVPress():
+def getCSVPress(w2):
     palletDict = defaultdict(list)
     filepath = filedialog.askopenfilename()
     with open(filepath, newline='') as csvfile:
@@ -39,7 +40,8 @@ def getCSVPress():
     numbers = [str(n) for n in numbers]
     letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
     shelves = ['H','M','S','F']
-    with open('output.csv', 'w', newline='') as csvfile:
+    outputfilename = filepath[:-4] + '_output.csv'
+    with open(outputfilename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for l in letters:
             writer.writerows([[]])
@@ -48,8 +50,7 @@ def getCSVPress():
             for s in shelves:
                 for row in getRows(palletDict, l, s, numbers):
                     writer.writerows([[s]+row])
-
-
+    w2["text"]="Saved output file in " + outputfilename
 
 def getRows(palletDict, l, s, numbers):
     rows = []
